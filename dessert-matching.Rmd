@@ -1,0 +1,94 @@
+---
+title: "favorite-desserts"
+output: html_document
+date: "2022-08-23"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here)
+library(rvest)
+```
+
+```{r}
+
+our_fave_desserts <- read_csv(here("favorite_desserts.csv"))
+
+usa_fave_desserts <- read_csv("https://github.com/brunj7/EDS-214-analytical-workflows/blob/main/data/iconic_desserts.csv?raw=TRUE")
+
+usa_fave_desserts_test <- usa_fave_desserts |> 
+  rename(Favorite_dessert = dessert)
+```
+
+As pair programming, write a script that should read a csv file of your favorite dessert (create it if you do not have one yet) and the csv file with the most iconic desserts (see link below) into R and try to determine if your favorite dessert is part of the most iconic desserts!
+
+```{r}
+join <- inner_join(x = our_fave_desserts, y = usa_fave_desserts_test)
+```
+
+
+
+```{r}
+library(tidyverse)
+library(here)
+library(janitor)
+
+our_fave_desserts <- read_csv(here("favorite_desserts.csv"))
+
+usa_fave_desserts <- read_csv("https://github.com/brunj7/EDS-214-analytical-workflows/blob/main/data/iconic_desserts.csv?raw=TRUE")
+
+
+iconic <- read_csv(here("iconic_desserts.csv")) # file to compare favorites to
+fave <- read_csv(here("favorite_desserts.csv")) %>%
+  clean_names() # file with no match
+fave_test <- read_csv(here("favorite_desserts_test.csv")) %>%
+  clean_names() # file with a match
+
+
+# Test with no matches
+matches <- c()
+
+for (i in seq_along(usa_fave_desserts$dessert)) {
+  for (j in seq_along(our_fave_desserts$Favorite_dessert)) {
+    if (usa_fave_desserts$dessert[i] == our_fave_desserts$Favorite_dessert[j]) {
+      matches <- append(matches, usa_fave_desserts$dessert[i])
+    }
+  }
+}
+
+if (length(matches) == 0) {
+  message("No matches.")
+}
+
+if (length(matches) != 0) {
+  print(matches_test)
+}
+
+# should output No matches.
+
+# Test with a match
+matches_test <- c()
+
+
+for (i in seq_along(fave_test$favorite_dessert)) {
+  for (j in seq_along(iconic$dessert)) {
+    if (fave_test$favorite_dessert[i] == iconic$dessert[j]) {
+      matches_test <- append(matches_test, fave_test$favorite_dessert[i])
+    }
+  }
+}
+
+
+if (length(matches_test) == 0) {
+  message("No matches.")
+}
+
+if (length(matches_test) != 0) {
+  print(matches_test)
+}
+
+# Should output "Shave ice" or whatever match is in your file
+```
+
